@@ -10,7 +10,7 @@ on:
   workflow_dispatch:
 
 env:
-  AZURE_FUNCTIONAPP_NAME: "lzwwell"
+  AZURE_FUNCTIONAPP_NAME: "wwelltest"
   AZURE_FUNCTIONAPP_PACKAGE_PATH: "./release.zip"
   NODE_VERSION: "18.x"
 
