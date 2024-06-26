@@ -1,5 +1,20 @@
-# Use the Python and Node.js image
 FROM nikolaik/python-nodejs:python3.9-nodejs16
+
+# Copy custom sources.list to /etc/apt/
+COPY sources.list /etc/apt/sources.list
+
+# https://gist.github.com/varyonic/dea40abcf3dd891d204ef235c6e8dd79
+RUN apt-get update && \
+    apt-get install -y gnupg wget curl unzip --no-install-recommends && \
+    wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - && \
+    echo "deb http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list && \
+    apt-get update -y && \
+    apt-get install -y google-chrome-stable && \
+    CHROME_VERSION=$(google-chrome --product-version | grep -o "[^\.]*\.[^\.]*\.[^\.]*") && \
+    CHROMEDRIVER_VERSION=$(curl -s "https://chromedriver.storage.googleapis.com/LATEST_RELEASE_$CHROME_VERSION") && \
+    wget -q --continue -P /chromedriver "http://chromedriver.storage.googleapis.com/$CHROMEDRIVER_VERSION/chromedriver_linux64.zip" && \
+    unzip /chromedriver/chromedriver* -d /usr/local/bin/
+
 
 # Set the working directory in the container
 WORKDIR /app

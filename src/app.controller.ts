@@ -3,6 +3,11 @@ import { PuppeteerService } from './puppeteer.service';
 import { PythonService } from './python.service';
 import axios from 'axios';
 import * as fs from 'fs';
+import * as https from 'https';
+
+const agent = new https.Agent({
+  rejectUnauthorized: false,  // Disable SSL verification
+});
 
 @Controller()
 export class AppController {
@@ -27,7 +32,7 @@ export class AppController {
     let htmlContent: string;
 
     try {
-      const response = await axios.get(url);
+      const response = await axios.get(url, {httpsAgent: agent});
       htmlContent = response.data;
 
       const tempFilePath = `./temp/temp-html-${Date.now()}.html`;

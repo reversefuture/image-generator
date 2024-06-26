@@ -16,7 +16,11 @@ def main():
     options.add_argument('--no-sandbox')
     options.add_argument('--disable-dev-shm-usage')
 
-    driver = webdriver.Chrome(options=options)
+
+    chrome_options = webdriver.ChromeOptions()
+    chrome_options.add_argument('--headless')  # Optional: Run in headless mode
+    driver = webdriver.Chrome(executable_path='/usr/local/bin/chromedriver', options=chrome_options)
+    # driver = webdriver.Chrome(options=options)
 
     try:
         # Load HTML content in Chrome and capture a screenshot
