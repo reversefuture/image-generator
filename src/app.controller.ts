@@ -18,6 +18,11 @@ export class AppController {
     return "Hello World!";
   }
 
+  @Get("env")
+  async env(): Promise<string> {  
+    return 'test_env: ' + process.env.TEST_ENV;
+  }
+
   @Get('generate-image')
   async generateImage(@Query('url') url: string): Promise<string> {
     const imagePath = `./temp/screenshot-${Date.now()}.png`;
