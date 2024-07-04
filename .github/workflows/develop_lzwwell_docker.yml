@@ -1,0 +1,45 @@
+# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
+# More GitHub Actions for Azure: https://github.com/Azure/actions
+
+name: Develop branch CI/CD Pipeline - Building and Deploy API as ZIP to Azure (lzwwell)
+
+on:
+  push:
+    branches:
+      - develop
+  pull_request:
+    branches:
+      - develop
+  workflow_dispatch:
+
+env:
+  AZURE_FUNCTIONAPP_NAME: "lzwwell"
+  AZURE_FUNCTIONAPP_PACKAGE_PATH: "./release.zip"
+  NODE_VERSION: "18.x"
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: develop
+
+      - name: Log in to Azure Container Registry
+        run: |
+          az login --service-principal -u ${{ secrets.AZURE_CLIENT_ID }} -p ${{ secrets.AZURE_CLIENT_SECRET }} --tenant ${{ secrets.AZURE_TENANT_ID }}
+          az acr login --name ${{ secrets.ACR_REGISTRY }}
+
+      - name: Build and push Docker image
+        run: |
+          docker build -t ${{ secrets.ACR_REGISTRY }}/my-app:latest .
+          docker push ${{ secrets.ACR_REGISTRY }}/my-app:latest
+
+      - name: Deploy to Azure Web App using Oryx
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: 'wwelltest'
+          slot-name: 'Production'
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_31E35E1B45D7450FBF1C9F1AE1AD8BCD }}
+          images: ${{ secrets.ACR_REGISTRY }}/my-app:latest
