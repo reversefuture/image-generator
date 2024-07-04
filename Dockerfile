@@ -34,8 +34,11 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy the rest of your application code to the working directory
 COPY . .
 
+# Build the Nest.js application
+RUN npm run build
+
 # Expose the port your app runs on (assuming it's 3000 for Nest.js)
 EXPOSE 3000
 
 # Command to start your server
-CMD ["npm", "start"]
+CMD ["npm", "start:prod"]
