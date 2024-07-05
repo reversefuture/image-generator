@@ -1,45 +1,26 @@
-# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
-# More GitHub Actions for Azure: https://github.com/Azure/actions
-
-name: Develop branch CI/CD Pipeline - Building and Deploy API as ZIP to Azure (lzwwell)
+name: Azure Container Apps Deploy
 
 on:
   push:
     branches:
       - develop
-  pull_request:
-    branches:
-      - develop
-  workflow_dispatch:
-
-env:
-  AZURE_FUNCTIONAPP_NAME: "lzwwell"
-  AZURE_FUNCTIONAPP_PACKAGE_PATH: "./release.zip"
-  NODE_VERSION: "18.x"
 
 jobs:
-  build-and-deploy:
+  build:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v3
+
+      - name: Log in to Azure
+        uses: azure/login@v1
         with:
-          ref: develop
-
-      - name: Log in to Azure Container Registry
-        run: |
-          az login --service-principal -u ${{ secrets.AZURE_CLIENT_ID }} -p ${{ secrets.AZURE_CLIENT_SECRET }} --tenant ${{ secrets.AZURE_TENANT_ID }}
-          az acr login --name ${{ secrets.ACR_REGISTRY }}
-
-      - name: Build and push Docker image
-        run: |
-          docker build -t ${{ secrets.ACR_REGISTRY }}/my-app:${{ github.sha }} .
-          docker push ${{ secrets.ACR_REGISTRY }}/my-app:${{ github.sha }}
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
 
       - name: Build and deploy Container App
         uses: azure/container-apps-deploy-action@v1
         with:
-          acrName: ${{ secrets.ACR_REGISTRY }}
-          containerAppName: my-app
-          resourceGroup: resource1
-          imageToDeploy: ${{ secrets.ACR_REGISTRY }}/my-app:${{ github.sha }}
+          appSourcePath: ${{ github.workspace }}/src
+          acrName: <ACR_NAME>
+          containerAppName: my-container-app
+          resourceGroup: my-container-app-rg
