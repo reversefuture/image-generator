@@ -34,4 +34,4 @@ jobs:
             registry-username: ${{ secrets.REGISTRY_USERNAME }}
             registry-password: ${{ secrets.REGISTRY_PASSWORD }}
             name: lzcontainer1
-            # location: 'west us'
+            location: 'west us'
